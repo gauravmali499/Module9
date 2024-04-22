@@ -1,0 +1,120 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Newtonsoft.Json;
+
+// Define classes to deserialize JSON data
+public class MovieDetails
+{
+    public string DirectorName { get; set; }
+    public List<string> ActorsNames { get; set; }
+    public string VideoLink { get; set; }
+}
+
+public class Movie
+{
+    public int MovieID { get; set; }
+    public string MovieName { get; set; }
+    public MovieDetails Details { get; set; }
+}
+
+public class MovieData
+{
+    public List<string> Directors { get; set; }
+    public List<Movie> Movies { get; set; }
+    public List<string> Actors { get; set; }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Read data from movie.json and info.json files
+        string movieJson = File.ReadAllText("movie.json");
+        string infoJson = File.ReadAllText("info.json");
+
+        // Deserialize JSON data into MovieData objects
+        MovieData movieData = JsonConvert.DeserializeObject<MovieData>(movieJson);
+        MovieData infoData = JsonConvert.DeserializeObject<MovieData>(infoJson);
+
+        // List all directors to the user
+        Console.WriteLine("List of Directors:");
+        foreach (string director in movieData.Directors.Distinct())
+        {
+            Console.WriteLine(director);
+        }
+
+        // Input a director name from the user
+        Console.Write("\nEnter a director name: ");
+        string directorName = Console.ReadLine();
+
+        // Display movies of the input director
+        Console.WriteLine($"\nMovies directed by {directorName}:");
+        foreach (var movie in movieData.Movies.Where(m => m.Details.DirectorName == directorName))
+        {
+            Console.WriteLine($"{movie.MovieName}");
+        }
+
+        // Show all movies names and take input movie name from the user
+        Console.Write("\nEnter a movie name: ");
+        string movieName = Console.ReadLine();
+
+        // Display actors of the input movie
+        var selectedMovie = movieData.Movies.FirstOrDefault(m => m.MovieName == movieName);
+        if (selectedMovie != null)
+        {
+            Console.WriteLine($"\nActors in {selectedMovie.MovieName}:");
+            foreach (var actor in selectedMovie.Details.ActorsNames)
+            {
+                Console.WriteLine(actor);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Movie not found.");
+        }
+
+        // Print the movie name where director is working as an actor
+        var moviesWithDirectorAsActor = infoData.Movies.Where(m => m.Details.ActorsNames.Contains(directorName) && m.Details.DirectorName != directorName);
+        if (moviesWithDirectorAsActor.Any())
+        {
+            Console.WriteLine($"\nMovies where {directorName} worked as an actor:");
+            foreach (var movie in moviesWithDirectorAsActor)
+            {
+                Console.WriteLine(movie.MovieName);
+            }
+        }
+        else
+        {
+            Console.WriteLine($"{directorName} did not work as an actor in any movie.");
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////explaination/////////////////////////////////
+In this code:
+
+We define classes MovieDetails, Movie, and MovieData to represent the structure of JSON data.
+We deserialize the JSON data from movie.json and info.json files into MovieData objects using JsonConvert.DeserializeObject method from the Newtonsoft.Json library.
+We list all directors, prompt the user to input a director name, and then display movies directed by that director.
+We prompt the user to input a movie name and display the actors of the selected movie.
+Finally, we print the movie names where the input director worked as an actor.
