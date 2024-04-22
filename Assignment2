@@ -1,0 +1,60 @@
+using System;
+using System.IO;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Specify the folder path
+        string folderPath = @"C:\Your\Folder\Path";
+
+        // Display folder hierarchy
+        DisplayFolderHierarchy(folderPath, "");
+    }
+
+    static void DisplayFolderHierarchy(string folderPath, string indent)
+    {
+        try
+        {
+            // Display directories
+            string[] directories = Directory.GetDirectories(folderPath);
+            foreach (string directory in directories)
+            {
+                Console.WriteLine(indent + Path.GetFileName(directory) + "\\");
+                DisplayFolderHierarchy(directory, indent + "   "); // Recursive call
+            }
+
+            // Display files
+            string[] files = Directory.GetFiles(folderPath);
+            foreach (string file in files)
+            {
+                Console.WriteLine(indent + Path.GetFileName(file));
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+?????????????????????????
+Replace "C:\Your\Folder\Path" with the actual path of the folder you want to display the hierarchy for.
+
+This code recursively traverses through all directories and subdirectories, printing their names with appropriate indentation. It also prints the names of files within those directories
