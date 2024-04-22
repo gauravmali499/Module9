@@ -1,0 +1,79 @@
+using System;
+using System.IO;
+using System.Linq;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Specify the folder path
+        string folderPath = @"C:\Your\Image\Gallery\Folder";
+
+        // Delete files except images modified in the current month
+        DeleteNonCurrentMonthImages(folderPath);
+    }
+
+    static void DeleteNonCurrentMonthImages(string folderPath)
+    {
+        try
+        {
+            // Get current month and year
+            int currentMonth = DateTime.Now.Month;
+            int currentYear = DateTime.Now.Year;
+
+            // Get all files in the folder
+            string[] files = Directory.GetFiles(folderPath);
+
+            // Filter and delete files that are not images or not modified in the current month
+            foreach (string file in files)
+            {
+                if (IsImage(file) && IsModifiedCurrentMonth(file, currentMonth, currentYear))
+                {
+                    Console.WriteLine($"Keeping: {file}");
+                }
+                else
+                {
+                    File.Delete(file);
+                    Console.WriteLine($"Deleted: {file}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    static bool IsImage(string file)
+    {
+        string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+        return imageExtensions.Contains(Path.GetExtension(file).ToLower());
+    }
+
+    static bool IsModifiedCurrentMonth(string file, int currentMonth, int currentYear)
+    {
+        DateTime lastModifiedDate = File.GetLastWriteTime(file);
+        return lastModifiedDate.Month == currentMonth && lastModifiedDate.Year == currentYear;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////
+Replace "C:\Your\Image\Gallery\Folder" with the actual path of your image gallery folder.
+
+This code checks each file in the specified folder, keeps only images (with extensions .jpg, .jpeg, .png, .gif, .bmp) that have been modified in the current month, and deletes all other files.
